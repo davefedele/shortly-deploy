@@ -3,7 +3,17 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
-
+      // options: {
+      //         separator: ';'
+      //       },
+      //       js: {
+      //         src: ['public/client/**/*.js'],
+      //         dest: 'public/dist/<%= pkg.name %>.js'
+      //       },
+      //       vendor: {
+      //         src: ['public/lib/jquery.js', 'public/lib/underscore.js', 'public/lib/**/*.js'],
+      //         dest: 'public/dist/vendors.js'
+      //       }
     },
 
     mochaTest: {
@@ -32,6 +42,12 @@ module.exports = function(grunt) {
             'public/client/linksView.js',
             'public/client/createLinkView.js',
             'public/client/router.js'
+          ],
+            'public/dist/vendor.min.js' : [
+              'public/lib/jquery.js',
+              'public/lib/underscore.js',
+              'public/lib/backbone.js',
+              'public/lib/handlebars.js'
           ]
         }
       }
@@ -43,7 +59,8 @@ module.exports = function(grunt) {
         'public/client/*.js',
         'app/config.js',
         'app/**/*.js',
-        'lib/*.js'
+        'lib/*.js',
+        'public/dist/**/*.js'
       ],
       options: {
         force: 'true',
@@ -58,7 +75,7 @@ module.exports = function(grunt) {
     cssmin: {
       minify: {
         src: 'public/style.css',
-        dest: 'public/style.min.css'
+        dest: 'public/dist/style.min.css'
       }
     },
 
@@ -81,6 +98,10 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        options: {
+            stdout: true
+        },
+        command: 'git push azure master'
       }
     },
   });
@@ -116,20 +137,24 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'uglify',
+    'jshint',
+    'cssmin'
   ]);
 
   grunt.registerTask('upload', function(n) {
     if(grunt.option('prod')) {
-      // add your production server task here
+      grunt.task.run([ 'shell:prodServer' ]);
+      // git push azure master;
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
   grunt.registerTask('deploy', [
-    'uglify',
-    'jshint',
-    'cssmin'
+    'build',
+    'test',
+    'upload'
   ]);
 
 
