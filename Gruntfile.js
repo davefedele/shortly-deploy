@@ -3,6 +3,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+
     },
 
     mochaTest: {
@@ -21,11 +22,28 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      my_target: {
+        files:{
+          'public/dist/clientapp.min.js' : [
+            'public/client/app.js',
+            'public/client/link.js',
+            'public/client/links.js',
+            'public/client/linkView.js',
+            'public/client/linksView.js',
+            'public/client/createLinkView.js',
+            'public/client/router.js'
+          ]
+        }
+      }
     },
 
     jshint: {
       files: [
         // Add filespec list here
+        'public/client/*.js',
+        'app/config.js',
+        'app/**/*.js',
+        'lib/*.js'
       ],
       options: {
         force: 'true',
@@ -38,6 +56,10 @@ module.exports = function(grunt) {
     },
 
     cssmin: {
+      minify: {
+        src: 'public/style.css',
+        dest: 'public/style.min.css'
+      }
     },
 
     watch: {
@@ -105,7 +127,9 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('deploy', [
-    // add your deploy tasks here
+    'uglify',
+    'jshint',
+    'cssmin'
   ]);
 
 
