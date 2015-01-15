@@ -1,5 +1,8 @@
 var db = require('mongoose');
-db.connect('placeholder');
+db.connect('mongodb://localhost:27017/shortlydb');
+
+
+module.exports = db;
 
 // var Bookshelf = require('bookshelf');
 // var path = require('path');
@@ -45,5 +48,3 @@ db.connect('placeholder');
 //     });
 //   }
 // });
-
-module.exports = db;
