@@ -80,7 +80,7 @@ describe('', function() {
             Link.findOne({'url' : 'http://www.roflzoo.com/'})
               .exec(function(err,link){
                 if(err) console.log(err);
-                expect(link.title).to.equal('Rofl Zoo - Daily funny animal pictures');
+                expect(link.title).to.equal('Funny animal pictures, funny animals, funniest dogs');
               });
           })
           .end(done);
@@ -92,7 +92,7 @@ describe('', function() {
 
       beforeEach(function(done) {
         link = new Link({
-          url: 'http://www.roflzoo.com/',
+          url: 'http://roflzoo.com/',
           title: 'Rofl Zoo - Daily funny animal pictures',
           base_url: 'http://127.0.0.1:4568',
           visits: 0
@@ -108,7 +108,7 @@ describe('', function() {
         request(app)
           .post('/links')
           .send({
-            'url': 'http://www.roflzoo.com/'})
+            'url': 'http://roflzoo.com/'})
           .expect(200)
           .expect(function(res) {
             var secondCode = res.body.code;
@@ -124,7 +124,7 @@ describe('', function() {
           .expect(302)
           .expect(function(res) {
             var redirect = res.headers.location;
-            expect(redirect).to.equal('http://www.roflzoo.com/');
+            expect(redirect).to.equal('http://roflzoo.com/');
           })
           .end(done);
       });

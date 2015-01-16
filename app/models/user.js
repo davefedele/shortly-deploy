@@ -4,25 +4,31 @@ var bcrypt = require('bcrypt-nodejs');
 // var Promise = require('bluebird');
 
 var userSchema = new mongoose.Schema({
-  username: {type: String, unique: true},
+  username: {type: String, index: {unique: true}},
   password: String
 });
 
-userSchema.post('init', function(){
-  hashPassword(this.password);
+userSchema.pre('save', function(next){
+  user = this;
+  if(user.isModified('password')){
+    bcrypt.hash(user.password, null, null, function(err, hash){
+      if (err){
+        next();
+      }
+      user.password = hash;
+      next();
+    });
+  } else {
+    next();
+  }
 });
 
 userSchema.methods.comparePassword = function(attemptedPassword, callback) {
-  bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
-    callback(isMatch);
-  });
-};
-userSchema.methods.hashPassword = function(password){
-  bcrypt.hash(password, null, null, function(err, hash){
-    if(err){
+  bcrypt.compare(attemptedPassword, this.password, function(err, isMatch) {
+    if (err) {
       throw err;
     }
-    this.password = hash;
+    callback(isMatch);
   });
 };
 

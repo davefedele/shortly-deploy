@@ -11,8 +11,9 @@ var linkSchema = new mongoose.Schema({
   createAt: { type: Date, default: Date.now }
 });
 
-linkSchema.post('init', function(){
+linkSchema.pre('save', function(next){
   this.shasum();
+  next();
 });
 
 linkSchema.methods.shasum = function(){
